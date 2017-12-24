@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using HoloToolkit.Unity;
 using UnityEngine;
-using UnityEngine.VR.WSA;
-using UnityEngine.VR.WSA.Persistence;
-using UnityEngine.VR.WSA.Sharing;
+
+
+
 
 namespace HoloToolkit.Sharing.Tests
 {
@@ -125,7 +125,7 @@ namespace HoloToolkit.Sharing.Tests
         /// <summary>
         /// WorldAnchorTransferBatch is the primary object in serializing/deserializing anchors.
         /// </summary>
-        private WorldAnchorTransferBatch sharedAnchorInterface;
+        private UnityEngine.XR.WSA.Sharing.WorldAnchorTransferBatch sharedAnchorInterface;
 
         /// <summary>
         /// Keeps track of stored anchor data blob.
@@ -135,7 +135,7 @@ namespace HoloToolkit.Sharing.Tests
         /// <summary>
         /// Keeps track of locally stored anchors.
         /// </summary>
-        private WorldAnchorStore anchorStore;
+        private UnityEngine.XR.WSA.Persistence.WorldAnchorStore anchorStore;
 
         /// <summary>
         /// Keeps track of the name of the anchor we are exporting.
@@ -187,7 +187,7 @@ namespace HoloToolkit.Sharing.Tests
 
             // We need to get our local anchor store started up.
             currentState = ImportExportState.AnchorStore_Initializing;
-            WorldAnchorStore.GetAsync(AnchorStoreReady);
+            UnityEngine.XR.WSA.Persistence.WorldAnchorStore.GetAsync(AnchorStoreReady);
         }
 
         private void Start()
@@ -306,7 +306,7 @@ namespace HoloToolkit.Sharing.Tests
         /// Called when the local anchor store is ready.
         /// </summary>
         /// <param name="store"></param>
-        private void AnchorStoreReady(WorldAnchorStore store)
+        private void AnchorStoreReady(UnityEngine.XR.WSA.Persistence.WorldAnchorStore store)
         {
             anchorStore = store;
             currentState = ImportExportState.AnchorStore_Initialized;
@@ -509,7 +509,7 @@ namespace HoloToolkit.Sharing.Tests
                 case ImportExportState.DataReady:
                     // DataReady is set when the anchor download completes.
                     currentState = ImportExportState.Importing;
-                    WorldAnchorTransferBatch.ImportAsync(rawAnchorData, ImportComplete);
+                    UnityEngine.XR.WSA.Sharing.WorldAnchorTransferBatch.ImportAsync(rawAnchorData, ImportComplete);
                     break;
                 case ImportExportState.InitialAnchorRequired:
                     currentState = ImportExportState.CreatingInitialAnchor;
@@ -528,7 +528,7 @@ namespace HoloToolkit.Sharing.Tests
         /// </summary>
         private void CreateAnchorLocally()
         {
-            var anchor = GetComponent<WorldAnchor>() ?? gameObject.AddComponent<WorldAnchor>();
+            var anchor = GetComponent<UnityEngine.XR.WSA.WorldAnchor>() ?? gameObject.AddComponent<UnityEngine.XR.WSA.WorldAnchor>();
 
             if (anchor.isLocated)
             {
@@ -543,7 +543,7 @@ namespace HoloToolkit.Sharing.Tests
         /// <summary>
         /// Callback to trigger when an anchor has been 'found'.
         /// </summary>
-        private void Anchor_OnTrackingChanged_InitialAnchor(WorldAnchor self, bool located)
+        private void Anchor_OnTrackingChanged_InitialAnchor(UnityEngine.XR.WSA.WorldAnchor self, bool located)
         {
             if (located)
             {
@@ -585,7 +585,7 @@ namespace HoloToolkit.Sharing.Tests
                         Debug.LogFormat("Attempting to load {0}...", anchorName);
                     }
 
-                    WorldAnchor anchor = anchorStore.Load(ids[index], gameObject);
+                    UnityEngine.XR.WSA.WorldAnchor anchor = anchorStore.Load(ids[index], gameObject);
                     if (anchor.isLocated)
                     {
                         AnchorLoadComplete();
@@ -608,7 +608,7 @@ namespace HoloToolkit.Sharing.Tests
         /// </summary>
         /// <param name="self"></param>
         /// <param name="located"></param>
-        private void ImportExportAnchorManager_OnTrackingChanged_Attaching(WorldAnchor self, bool located)
+        private void ImportExportAnchorManager_OnTrackingChanged_Attaching(UnityEngine.XR.WSA.WorldAnchor self, bool located)
         {
             if (SharingStage.Instance.ShowDetailedLogs)
             {
@@ -633,9 +633,9 @@ namespace HoloToolkit.Sharing.Tests
         /// </summary>
         /// <param name="status"></param>
         /// <param name="wat"></param>
-        private void ImportComplete(SerializationCompletionReason status, WorldAnchorTransferBatch wat)
+        private void ImportComplete(UnityEngine.XR.WSA.Sharing.SerializationCompletionReason status, UnityEngine.XR.WSA.Sharing.WorldAnchorTransferBatch wat)
         {
-            if (status == SerializationCompletionReason.Succeeded)
+            if (status == UnityEngine.XR.WSA.Sharing.SerializationCompletionReason.Succeeded)
             {
                 if (SharingStage.Instance.ShowDetailedLogs)
                 {
@@ -651,7 +651,7 @@ namespace HoloToolkit.Sharing.Tests
                         Debug.Log("Anchor name: " + first);
                     }
 
-                    WorldAnchor anchor = wat.LockObject(first, gameObject);
+                    UnityEngine.XR.WSA.WorldAnchor anchor = wat.LockObject(first, gameObject);
                     anchorStore.Save(first, anchor);
                 }
 
@@ -679,7 +679,7 @@ namespace HoloToolkit.Sharing.Tests
         /// </summary>
         private void Export()
         {
-            var anchor = GetComponent<WorldAnchor>();
+            var anchor = GetComponent<UnityEngine.XR.WSA.WorldAnchor>();
 
             string guidString = Guid.NewGuid().ToString();
             exportingAnchorName = guidString;
@@ -687,9 +687,9 @@ namespace HoloToolkit.Sharing.Tests
             // Save the anchor to our local anchor store.
             if (anchor != null && anchorStore.Save(exportingAnchorName, anchor))
             {
-                sharedAnchorInterface = new WorldAnchorTransferBatch();
+                sharedAnchorInterface = new UnityEngine.XR.WSA.Sharing.WorldAnchorTransferBatch();
                 sharedAnchorInterface.AddWorldAnchor(guidString, anchor);
-                WorldAnchorTransferBatch.ExportAsync(sharedAnchorInterface, WriteBuffer, ExportComplete);
+                UnityEngine.XR.WSA.Sharing.WorldAnchorTransferBatch.ExportAsync(sharedAnchorInterface, WriteBuffer, ExportComplete);
             }
             else
             {
@@ -711,9 +711,9 @@ namespace HoloToolkit.Sharing.Tests
         /// Called by the WorldAnchorTransferBatch when anchor exporting is complete.
         /// </summary>
         /// <param name="status"></param>
-        private void ExportComplete(SerializationCompletionReason status)
+        private void ExportComplete(UnityEngine.XR.WSA.Sharing.SerializationCompletionReason status)
         {
-            if (status == SerializationCompletionReason.Succeeded && exportingAnchorBytes.Count > MinTrustworthySerializedAnchorDataSize)
+            if (status == UnityEngine.XR.WSA.Sharing.SerializationCompletionReason.Succeeded && exportingAnchorBytes.Count > MinTrustworthySerializedAnchorDataSize)
             {
                 if (SharingStage.Instance.ShowDetailedLogs)
                 {
