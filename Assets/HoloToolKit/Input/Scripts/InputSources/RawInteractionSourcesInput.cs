@@ -156,7 +156,7 @@ namespace HoloToolkit.Unity.InputModule
         {
             // Update source position
             Vector3 sourcePosition;
-            if (interactionSource.properties.location.TryGetPosition(out sourcePosition))
+            if (interactionSource.sourcePose.TryGetPosition(out sourcePosition))
             {
                 sourceData.HasPosition = true;
                 sourceData.SourcePosition = sourcePosition;

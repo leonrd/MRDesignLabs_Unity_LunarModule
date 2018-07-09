@@ -220,7 +220,7 @@ namespace HoloToolkit.Unity
                     buildInfo.Scenes.ToArray(),
                     buildInfo.OutputDirectory,
                     buildInfo.BuildTarget,
-                    buildInfo.BuildOptions);
+                    buildInfo.BuildOptions).name;
 
                 if (buildError.StartsWith("Error"))
                 {

@@ -51,9 +51,9 @@ namespace HoloToolkit.Unity.InputModule
 
             // Register for hand and finger events to know where your hand
             // is being tracked and what state it is in.
-            UnityEngine.XR.WSA.Input.InteractionManager.SourceLost += InteractionManager_SourceLost;
-            UnityEngine.XR.WSA.Input.InteractionManager.SourceUpdated += InteractionManager_SourceUpdated;
-            UnityEngine.XR.WSA.Input.InteractionManager.SourceReleased += InteractionManager_SourceReleased;
+            UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceLost += InteractionManager_SourceLost;
+            UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceUpdated += InteractionManager_SourceUpdated;
+            UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceReleased += InteractionManager_SourceReleased;
         }
 
         private void ShowHandGuidanceIndicator(UnityEngine.XR.WSA.Input.InteractionSourceState hand)
@@ -101,8 +101,9 @@ namespace HoloToolkit.Unity.InputModule
             rotation = Quaternion.LookRotation(Camera.main.transform.forward, hand.properties.sourceLossMitigationDirection);
         }
 
-        private void InteractionManager_SourceUpdated(UnityEngine.XR.WSA.Input.InteractionSourceState hand)
+        private void InteractionManager_SourceUpdated(UnityEngine.XR.WSA.Input.InteractionSourceUpdatedEventArgs eventArgs)
         {
+            UnityEngine.XR.WSA.Input.InteractionSourceState hand = eventArgs.state;
             // Only display hand indicators when we are in a holding state, since hands going out of view will affect any active gestures.
             if (!hand.selectPressed)
             {
@@ -131,14 +132,16 @@ namespace HoloToolkit.Unity.InputModule
             }
         }
 
-        private void InteractionManager_SourceReleased(UnityEngine.XR.WSA.Input.InteractionSourceState hand)
+        private void InteractionManager_SourceReleased(UnityEngine.XR.WSA.Input.InteractionSourceReleasedEventArgs eventArgs)
         {
+            UnityEngine.XR.WSA.Input.InteractionSourceState hand = eventArgs.state;
             // Stop displaying the guidance indicator when the user releases their finger from the pressed state.
             RemoveTrackedHand(hand);
         }
 
-        private void InteractionManager_SourceLost(UnityEngine.XR.WSA.Input.InteractionSourceState hand)
+        private void InteractionManager_SourceLost(UnityEngine.XR.WSA.Input.InteractionSourceLostEventArgs eventArgs)
         {
+            UnityEngine.XR.WSA.Input.InteractionSourceState hand = eventArgs.state;
             // Stop displaying the guidance indicator when the user's hand leaves the view.
             RemoveTrackedHand(hand);
         }
@@ -156,9 +159,9 @@ namespace HoloToolkit.Unity.InputModule
 
         protected override void OnDestroy()
         {
-            UnityEngine.XR.WSA.Input.InteractionManager.SourceLost -= InteractionManager_SourceLost;
-            UnityEngine.XR.WSA.Input.InteractionManager.SourceUpdated -= InteractionManager_SourceUpdated;
-            UnityEngine.XR.WSA.Input.InteractionManager.SourceReleased -= InteractionManager_SourceReleased;
+            UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceLost -= InteractionManager_SourceLost;
+            UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceUpdated -= InteractionManager_SourceUpdated;
+            UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceReleased -= InteractionManager_SourceReleased;
 
             base.OnDestroy();
         }

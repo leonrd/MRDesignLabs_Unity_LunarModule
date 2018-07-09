@@ -5,9 +5,9 @@
 using UnityEngine;
 
 #if UNITY_WSA
-using UnityEngine.VR.WSA;
-using UnityEngine.VR.WSA.Persistence;
-using UnityEngine.VR.WSA.Sharing;
+using UnityEngine.XR.WSA;
+using UnityEngine.XR.WSA.Persistence;
+using UnityEngine.XR.WSA.Sharing;
 #endif
 
 using System.Collections;

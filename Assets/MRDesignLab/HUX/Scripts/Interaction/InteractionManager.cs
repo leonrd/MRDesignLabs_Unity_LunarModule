@@ -115,21 +115,23 @@ namespace HUX.Interaction
             ActiveRecognizer.StartCapturingGestures();
             SetupEvents(true);
 
-			UnityEngine.XR.WSA.Input.InteractionManager.SourcePressed += InteractionManager_SourcePressedCallback;
-			UnityEngine.XR.WSA.Input.InteractionManager.SourceReleased += InteractionManager_SourceReleasedCallback;
+			UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourcePressed += InteractionManager_SourcePressedCallback;
+			UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceReleased += InteractionManager_SourceReleasedCallback;
 
 			bLockFocus = true;
 		}
 
-		private void InteractionManager_SourcePressedCallback(UnityEngine.XR.WSA.Input.InteractionSourceState state)
-		{
-			AFocuser focuser = GetFocuserForSource(state.source.kind);
+		private void InteractionManager_SourcePressedCallback(UnityEngine.XR.WSA.Input.InteractionSourcePressedEventArgs eventArgs)
+        {
+            UnityEngine.XR.WSA.Input.InteractionSourceState state = eventArgs.state;
+            AFocuser focuser = GetFocuserForSource(state.source.kind);
 			OnPressedEvent(focuser);
 		}
 
-		private void InteractionManager_SourceReleasedCallback(UnityEngine.XR.WSA.Input.InteractionSourceState state)
-		{
-			AFocuser focuser = GetFocuserForSource(state.source.kind);
+		private void InteractionManager_SourceReleasedCallback(UnityEngine.XR.WSA.Input.InteractionSourceReleasedEventArgs eventArgs)
+        {
+            UnityEngine.XR.WSA.Input.InteractionSourceState state = eventArgs.state;
+            AFocuser focuser = GetFocuserForSource(state.source.kind);
 			OnReleasedEvent(focuser);
 		}
 
